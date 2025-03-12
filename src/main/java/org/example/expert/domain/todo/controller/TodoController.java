@@ -2,6 +2,7 @@ package org.example.expert.domain.todo.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.expert.domain.common.annotation.Auth;
 import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class TodoController {
@@ -31,7 +33,20 @@ public class TodoController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
+        log.info("getTodos handler");
         return ResponseEntity.ok(todoService.getTodos(page, size));
+    }
+
+    @GetMapping("/todos/search")
+    public ResponseEntity<Page<TodoResponse>> getTodosWithSearch(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) String weather,
+            @RequestParam(required = false) String start_date,
+            @RequestParam(required = false) String end_date,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(todoService.findWithQuery(q, weather, start_date, end_date, page, size));
     }
 
     @GetMapping("/todos/{todoId}")

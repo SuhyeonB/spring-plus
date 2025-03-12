@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -52,6 +54,42 @@ public class TodoService {
         Pageable pageable = PageRequest.of(page - 1, size);
 
         Page<Todo> todos = todoRepository.findAllByOrderByModifiedAtDesc(pageable);
+
+        return todos.map(todo -> new TodoResponse(
+                todo.getId(),
+                todo.getTitle(),
+                todo.getContents(),
+                todo.getWeather(),
+                new UserResponse(todo.getUser().getId(), todo.getUser().getEmail()),
+                todo.getCreatedAt(),
+                todo.getModifiedAt()
+        ));
+    }
+
+    public Page<TodoResponse> findWithQuery(String q, String weather, String startDate, String endDate, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        Page<Todo> todos;
+
+        LocalDate start = (startDate != null) ? LocalDate.parse(startDate) : null;
+        LocalDate end = (endDate != null) ? LocalDate.parse(endDate) : null;
+
+        if(q != null) {
+            if(start != null && end != null) {
+                todos = todoRepository.findByQueryAndPeriod(q, start, end, pageable);
+            } else {
+                todos = todoRepository.findByTitleOrContentsContaining(q, pageable);
+            }
+        } else if (weather != null) {
+            if(start != null && end != null) {
+                todos = todoRepository.findByWeatherAndPeriod(weather, start, end, pageable);
+            }
+            else {
+                todos = todoRepository.findByWeather(weather, pageable);
+            }
+        } else {
+            todos = todoRepository.findAllByOrderByModifiedAtDesc(pageable);
+        }
 
         return todos.map(todo -> new TodoResponse(
                 todo.getId(),
