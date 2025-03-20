@@ -1,7 +1,6 @@
 package org.example.expert.domain.todo.controller;
 
 import org.example.expert.config.JwtAuthenticationFilter;
-import org.example.expert.config.JwtUtil;
 import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
@@ -11,7 +10,6 @@ import org.example.expert.domain.user.entity.User;
 import org.example.expert.domain.user.enums.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;

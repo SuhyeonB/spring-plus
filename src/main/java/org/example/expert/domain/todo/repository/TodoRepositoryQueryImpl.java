@@ -1,8 +1,5 @@
 package org.example.expert.domain.todo.repository;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -64,7 +61,7 @@ public class TodoRepositoryQueryImpl implements TodoRepositoryQuery{
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = jpaQueryFactory
+        long total = Optional.ofNullable(jpaQueryFactory
                 .select(todo.count())
                 .from(todo)
                 .where(
@@ -72,7 +69,7 @@ public class TodoRepositoryQueryImpl implements TodoRepositoryQuery{
                         managerContains(nickname),
                         createdAtBetween(start, end)
                 )
-                .fetchOne();
+                .fetchOne()).orElse(0L);
 
         return new PageImpl<>(list, pageable, total);
     }
