@@ -10,7 +10,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum UserRole {
     ROLE_USER(Authority.USER),
-    ROLE_ADMOIN(Authority.ADMIN);
+    ROLE_ADMIN(Authority.ADMIN);
 
     private final String userRole;
 

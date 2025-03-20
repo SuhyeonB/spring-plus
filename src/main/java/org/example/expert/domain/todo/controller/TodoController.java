@@ -7,6 +7,7 @@ import org.example.expert.domain.common.dto.AuthUser;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponse;
+import org.example.expert.domain.todo.dto.response.TodoSearchResponse;
 import org.example.expert.domain.todo.service.TodoService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,6 @@ public class TodoController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        log.info("getTodos handler");
         return ResponseEntity.ok(todoService.getTodos(page, size));
     }
 
@@ -47,6 +47,18 @@ public class TodoController {
             @RequestParam(defaultValue = "10") int size
     ) {
         return ResponseEntity.ok(todoService.findWithQuery(q, weather, start_date, end_date, page, size));
+    }
+
+    @GetMapping("/todos/search/v2")
+    public ResponseEntity<Page<TodoSearchResponse>> getTodoWithSearchV2(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String nickname,
+            @RequestParam(required = false) String start_date,
+            @RequestParam(required = false) String end_date,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        return ResponseEntity.ok(todoService.findWithQueryV2(title, nickname, start_date, end_date, page, size));
     }
 
     @GetMapping("/todos/{todoId}")

@@ -7,10 +7,12 @@ import org.example.expert.domain.common.exception.InvalidRequestException;
 import org.example.expert.domain.todo.dto.request.TodoSaveRequest;
 import org.example.expert.domain.todo.dto.response.TodoResponse;
 import org.example.expert.domain.todo.dto.response.TodoSaveResponse;
+import org.example.expert.domain.todo.dto.response.TodoSearchResponse;
 import org.example.expert.domain.todo.entity.Todo;
 import org.example.expert.domain.todo.repository.TodoRepository;
 import org.example.expert.domain.user.dto.response.UserResponse;
 import org.example.expert.domain.user.entity.User;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -117,5 +121,19 @@ public class TodoService {
                 todo.getCreatedAt(),
                 todo.getModifiedAt()
         );
+    }
+
+    public Page<TodoSearchResponse> findWithQueryV2(String title, String nickname, String startDate, String endDate, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        LocalDate start_date = (startDate == null || startDate.isBlank()) ? null : LocalDate.parse(startDate);
+        LocalDate end_date = (endDate == null || endDate.isBlank()) ? null : LocalDate.parse(endDate);
+
+        LocalDateTime start = (start_date == null)
+                ? LocalDateTime.of(2020,1,1,0,0,0)
+                : start_date.atStartOfDay();
+        LocalDateTime end = (end_date == null) ? LocalDateTime.now() : end_date.atTime(23,59,59);
+
+        return todoRepository.searchTodos(title, nickname, start, end, pageable);
     }
 }
